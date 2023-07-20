@@ -185,18 +185,19 @@ function changeRow() {
 }
 
 function declareGameOutcome() {
-  recordGameStats();
+  recordGameStats(currentRow !== 6);
   changeGameOverText();
   viewGameOverMessage();
   setTimeout(startNewGame, 4000);
 }
 
-function recordGameStats() {
-  gamesPlayed.push({ solved: true, guesses: currentRow });
+function recordGameStats(solved) {
+  gamesPlayed.push({ solved, guesses: currentRow });
 }
 
 function changeGameOverText() {
   gameOverGuessCount.innerText = currentRow;
+  gameOverMessage.innerText = 'Yay!';
   winningMessage.classList.remove('collapsed');
   losingMessage.classList.add('collapsed');
   
