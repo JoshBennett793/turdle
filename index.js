@@ -266,6 +266,13 @@ function getTotalWins() {
   return gamesPlayed.filter(game => game.solved).length;
 }
 
+function getAverageNumOfGuesses() {
+  const totalNumOfGuesses = gamesPlayed.reduce((acc, game) => {
+    return acc + game.guesses;
+  }, 0);
+  return totalNumOfGuesses / getTotalGamesPlayed();
+}
+
 // Update Stat Elements
 
 function updateTotalGamesPlayed() {
@@ -277,11 +284,28 @@ function updatePercentCorrect() {
   const totalGamesPlayed = getTotalGamesPlayed();
   let percentage = (totalWins / totalGamesPlayed) * 100;
 
+  if (`${percentage}`.includes('.')) {
+    percentage = Number(percentage.toFixed(2));
+  }
+
   if (!gamesPlayed.length) {
     percentage = 0;
   }
 
   stats.percentCorrect.innerText = percentage;
+}
+
+function updateAverageGuesses() {
+  let avg = getAverageNumOfGuesses();
+
+  if (`${avg}`.includes('.')) {
+    avg = Number(avg.toFixed(1));
+  }
+
+  if (!gamesPlayed.length) {
+    avg = 0;
+  }
+  stats.averageGuesses.innerText = avg;
 }
 
 // Change Page View Functions
@@ -310,6 +334,8 @@ function viewGame() {
 function viewStats() {
   updateTotalGamesPlayed();
   updatePercentCorrect();
+  updateAverageGuesses();
+
   letterKey.classList.add('hidden');
   gameBoard.classList.add('collapsed');
   rules.classList.add('collapsed');
