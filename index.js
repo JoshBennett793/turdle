@@ -17,6 +17,7 @@ var letterKey = document.querySelector('#key-section');
 var rules = document.querySelector('#rules-section');
 var stats = document.querySelector('#stats-section');
 var gameOverBox = document.querySelector('#game-over-section');
+let gameOverMessage = document.querySelector('#game-over-message');
 var gameOverGuessCount = document.querySelector('#game-over-guesses-count');
 var gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
 
@@ -60,25 +61,26 @@ function getRandomWord(array) {
 }
 
 function updateInputPermissions() {
-  for(var i = 0; i < inputs.length; i++) {
+  for (var i = 0; i < inputs.length; i++) {
+    // currentRow has already been incremented here
     if(!inputs[i].id.includes(`-${currentRow}-`)) {
       inputs[i].disabled = true;
     } else {
       inputs[i].disabled = false;
     }
   }
-
-  inputs[0].focus();
+  const nextInput = document.querySelector(`#row-${currentRow} th :nth-child(1)`);
+  nextInput.focus();
 }
 
 function moveToNextInput(e) {
   var key = e.keyCode || e.charCode;
 
   // left arrow key functionality
-  if ( key === 37 ) {
+  if (key === 37) {
     var indexOfNext = parseInt(e.target.id.split('-')[2]) - 1;
     inputs[indexOfNext].focus();
-  } else if ( key !== 8 && key !== 46 ) {
+  } else if (key !== 8 && key !== 46) {
     var indexOfNext = parseInt(e.target.id.split('-')[2]) + 1;
     inputs[indexOfNext].focus();
   }
@@ -190,10 +192,15 @@ function recordGameStats() {
 
 function changeGameOverText() {
   gameOverGuessCount.innerText = currentRow;
+
   if (currentRow < 2) {
     gameOverGuessGrammar.classList.add('collapsed');
   } else {
     gameOverGuessGrammar.classList.remove('collapsed');
+  }
+
+  if (currentRow === 6) {
+    gameOverMessage.innerText = 'Oh no!';
   }
 }
 
