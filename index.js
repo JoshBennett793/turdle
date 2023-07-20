@@ -41,14 +41,22 @@ viewStatsButton.addEventListener('click', viewStats);
 
 // Functions
 function setGame() {
-  currentRow = 1;
-  winningWord = getRandomWord();
-  updateInputPermissions();
+  fetch('http://localhost:3001/api/v1/words')
+    .then(resp => resp.json())
+    .then(data => {
+      // create global variable to be referenced elsewhere
+      words = data;
+      winningWord = getRandomWord(words);
+    })
+    .then(() => {
+      currentRow = 1;
+      updateInputPermissions();
+    });
 }
 
-function getRandomWord() {
-  var randomIndex = Math.floor(Math.random() * 2500);
-  return words[randomIndex];
+function getRandomWord(array) {
+  var randomIndex = Math.floor(Math.random() * array.length);
+  return array[randomIndex];
 }
 
 function updateInputPermissions() {
