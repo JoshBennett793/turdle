@@ -74,7 +74,11 @@ function updateInputPermissions() {
 function moveToNextInput(e) {
   var key = e.keyCode || e.charCode;
 
-  if( key !== 8 && key !== 46 ) {
+  // left arrow key functionality
+  if ( key === 37 ) {
+    var indexOfNext = parseInt(e.target.id.split('-')[2]) - 1;
+    inputs[indexOfNext].focus();
+  } else if ( key !== 8 && key !== 46 ) {
     var indexOfNext = parseInt(e.target.id.split('-')[2]) + 1;
     inputs[indexOfNext].focus();
   }
