@@ -1,25 +1,28 @@
 // Global Variables
-var winningWord = '';
-var currentRow = 1;
-var guess = '';
-var gamesPlayed = [];
+let winningWord = '';
+let currentRow = 1;
+let guess = '';
+let gamesPlayed = [];
 
 // Query Selectors
-var inputs = document.querySelectorAll('input');
-var guessButton = document.querySelector('#guess-button');
-var keyLetters = document.querySelectorAll('span');
-var errorMessage = document.querySelector('#error-message');
-var viewRulesButton = document.querySelector('#rules-button');
-var viewGameButton = document.querySelector('#play-button');
-var viewStatsButton = document.querySelector('#stats-button');
-var gameBoard = document.querySelector('#game-section');
-var letterKey = document.querySelector('#key-section');
-var rules = document.querySelector('#rules-section');
-var stats = document.querySelector('#stats-section');
-var gameOverBox = document.querySelector('#game-over-section');
-let gameOverMessage = document.querySelector('#game-over-message');
-var gameOverGuessCount = document.querySelector('#game-over-guesses-count');
-var gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
+const inputs = document.querySelectorAll('input');
+const guessButton = document.querySelector('#guess-button');
+const keyLetters = document.querySelectorAll('span');
+const errorMessage = document.querySelector('#error-message');
+const viewRulesButton = document.querySelector('#rules-button');
+const viewGameButton = document.querySelector('#play-button');
+const gameBoard = document.querySelector('#game-section');
+const viewStatsButton = document.querySelector('#stats-button');
+const letterKey = document.querySelector('#key-section');
+const rules = document.querySelector('#rules-section');
+const stats = document.querySelector('#stats-section');
+const gameOverBox = document.querySelector('#game-over-section');
+const gameOverMessage = document.querySelector('#game-over-message');
+const gameOverGuessCount = document.querySelector('#game-over-guesses-count');
+const gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
+const winningMessage = document.querySelector('.win');
+const losingMessage = document.querySelector('.loss');
+const winningWordElement = document.querySelector('#winning-word');
 
 // Event Listeners
 window.addEventListener('load', setGame);
@@ -106,7 +109,9 @@ function submitGuess() {
     errorMessage.innerText = '';
     compareGuess();
     if (checkForWin()) {
-      setTimeout(declareWinner, 1000);
+      setTimeout(declareGameOutcome, 1000);
+    } else if (!checkForWin() && currentRow === 6) {
+      setTimeout(declareGameOutcome, 1000);
     } else {
       changeRow();
     }
@@ -179,7 +184,7 @@ function changeRow() {
   updateInputPermissions();
 }
 
-function declareWinner() {
+function declareGameOutcome() {
   recordGameStats();
   changeGameOverText();
   viewGameOverMessage();
@@ -192,15 +197,20 @@ function recordGameStats() {
 
 function changeGameOverText() {
   gameOverGuessCount.innerText = currentRow;
-
+  winningMessage.classList.remove('collapsed');
+  losingMessage.classList.add('collapsed');
+  
   if (currentRow < 2) {
     gameOverGuessGrammar.classList.add('collapsed');
   } else {
     gameOverGuessGrammar.classList.remove('collapsed');
   }
-
+  
   if (currentRow === 6) {
     gameOverMessage.innerText = 'Oh no!';
+    losingMessage.classList.remove('collapsed');
+    winningMessage.classList.add('collapsed');
+    winningWordElement.innerText = winningWord;
   }
 }
 
