@@ -15,11 +15,18 @@ const gameBoard = document.querySelector('#game-section');
 const viewStatsButton = document.querySelector('#stats-button');
 const letterKey = document.querySelector('#key-section');
 const rules = document.querySelector('#rules-section');
-const stats = document.querySelector('#stats-section');
+const statsSection = document.querySelector('#stats-section');
+const stats = {
+  totalGames: document.querySelector('#stats-total-games'),
+  percentCorrect: document.querySelector('#stats-percent-correct'),
+  averageGuesses: document.querySelector('#stats-average-guesses'),
+};
 const gameOverBox = document.querySelector('#game-over-section');
 const gameOverMessage = document.querySelector('#game-over-message');
 const gameOverGuessCount = document.querySelector('#game-over-guesses-count');
-const gameOverGuessGrammar = document.querySelector('#game-over-guesses-plural');
+const gameOverGuessGrammar = document.querySelector(
+  '#game-over-guesses-plural',
+);
 const winningMessage = document.querySelector('.win');
 const losingMessage = document.querySelector('.loss');
 const winningWordElement = document.querySelector('#winning-word');
@@ -28,11 +35,15 @@ const winningWordElement = document.querySelector('#winning-word');
 window.addEventListener('load', setGame);
 
 for (var i = 0; i < inputs.length; i++) {
-  inputs[i].addEventListener('keyup', function() { moveToNextInput(event) });
+  inputs[i].addEventListener('keyup', function () {
+    moveToNextInput(event);
+  });
 }
 
 for (var i = 0; i < keyLetters.length; i++) {
-  keyLetters[i].addEventListener('click', function() { clickLetter(event) });
+  keyLetters[i].addEventListener('click', function () {
+    clickLetter(event);
+  });
 }
 
 guessButton.addEventListener('click', submitGuess);
@@ -66,13 +77,15 @@ function getRandomWord(array) {
 function updateInputPermissions() {
   for (var i = 0; i < inputs.length; i++) {
     // currentRow has already been incremented here
-    if(!inputs[i].id.includes(`-${currentRow}-`)) {
+    if (!inputs[i].id.includes(`-${currentRow}-`)) {
       inputs[i].disabled = true;
     } else {
       inputs[i].disabled = false;
     }
   }
-  const nextInput = document.querySelector(`#row-${currentRow} th :nth-child(1)`);
+  const nextInput = document.querySelector(
+    `#row-${currentRow} th :nth-child(1)`,
+  );
   nextInput.focus();
 }
 
@@ -94,7 +107,11 @@ function clickLetter(e) {
   var activeIndex = null;
 
   for (var i = 0; i < inputs.length; i++) {
-    if(inputs[i].id.includes(`-${currentRow}-`) && !inputs[i].value && !activeInput) {
+    if (
+      inputs[i].id.includes(`-${currentRow}-`) &&
+      !inputs[i].value &&
+      !activeInput
+    ) {
       activeInput = inputs[i];
       activeIndex = i;
     }
@@ -123,8 +140,8 @@ function submitGuess() {
 function checkIsWord() {
   guess = '';
 
-  for(var i = 0; i < inputs.length; i++) {
-    if(inputs[i].id.includes(`-${currentRow}-`)) {
+  for (var i = 0; i < inputs.length; i++) {
+    if (inputs[i].id.includes(`-${currentRow}-`)) {
       guess += inputs[i].value;
     }
   }
@@ -136,8 +153,10 @@ function compareGuess() {
   var guessLetters = guess.split('');
 
   for (var i = 0; i < guessLetters.length; i++) {
-
-    if (winningWord.includes(guessLetters[i]) && winningWord.split('')[i] !== guessLetters[i]) {
+    if (
+      winningWord.includes(guessLetters[i]) &&
+      winningWord.split('')[i] !== guessLetters[i]
+    ) {
       updateBoxColor(i, 'wrong-location');
       updateKeyColor(guessLetters[i], 'wrong-location-key');
     } else if (winningWord.split('')[i] === guessLetters[i]) {
@@ -148,14 +167,13 @@ function compareGuess() {
       updateKeyColor(guessLetters[i], 'wrong-key');
     }
   }
-
 }
 
 function updateBoxColor(letterLocation, className) {
   var row = [];
 
   for (var i = 0; i < inputs.length; i++) {
-    if(inputs[i].id.includes(`-${currentRow}-`)) {
+    if (inputs[i].id.includes(`-${currentRow}-`)) {
       row.push(inputs[i]);
     }
   }
@@ -200,13 +218,13 @@ function changeGameOverText() {
   gameOverMessage.innerText = 'Yay!';
   winningMessage.classList.remove('collapsed');
   losingMessage.classList.add('collapsed');
-  
+
   if (currentRow < 2) {
     gameOverGuessGrammar.classList.add('collapsed');
   } else {
     gameOverGuessGrammar.classList.remove('collapsed');
   }
-  
+
   if (currentRow === 6) {
     gameOverMessage.innerText = 'Oh no!';
     losingMessage.classList.remove('collapsed');
@@ -232,8 +250,22 @@ function clearGameBoard() {
 
 function clearKey() {
   for (var i = 0; i < keyLetters.length; i++) {
-    keyLetters[i].classList.remove('correct-location-key', 'wrong-location-key', 'wrong-key');
+    keyLetters[i].classList.remove(
+      'correct-location-key',
+      'wrong-location-key',
+      'wrong-key',
+    );
   }
+}
+
+function getTotalGamesPlayed() {
+  return gamesPlayed.length;
+}
+
+// Update Stat Elements
+
+function updateTotalGamesPlayed() {
+  stats.totalGames.innerText = getTotalGamesPlayed();
 }
 
 // Change Page View Functions
@@ -242,7 +274,7 @@ function viewRules() {
   letterKey.classList.add('hidden');
   gameBoard.classList.add('collapsed');
   rules.classList.remove('collapsed');
-  stats.classList.add('collapsed');
+  statsSection.classList.add('collapsed');
   viewGameButton.classList.remove('active');
   viewRulesButton.classList.add('active');
   viewStatsButton.classList.remove('active');
@@ -252,25 +284,26 @@ function viewGame() {
   letterKey.classList.remove('hidden');
   gameBoard.classList.remove('collapsed');
   rules.classList.add('collapsed');
-  stats.classList.add('collapsed');
-  gameOverBox.classList.add('collapsed')
+  statsSection.classList.add('collapsed');
+  gameOverBox.classList.add('collapsed');
   viewGameButton.classList.add('active');
   viewRulesButton.classList.remove('active');
   viewStatsButton.classList.remove('active');
 }
 
 function viewStats() {
+  updateTotalGamesPlayed();
   letterKey.classList.add('hidden');
   gameBoard.classList.add('collapsed');
   rules.classList.add('collapsed');
-  stats.classList.remove('collapsed');
+  statsSection.classList.remove('collapsed');
   viewGameButton.classList.remove('active');
   viewRulesButton.classList.remove('active');
   viewStatsButton.classList.add('active');
 }
 
 function viewGameOverMessage() {
-  gameOverBox.classList.remove('collapsed')
+  gameOverBox.classList.remove('collapsed');
   letterKey.classList.add('hidden');
   gameBoard.classList.add('collapsed');
 }
