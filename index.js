@@ -262,10 +262,26 @@ function getTotalGamesPlayed() {
   return gamesPlayed.length;
 }
 
+function getTotalWins() {
+  return gamesPlayed.filter(game => game.solved).length;
+}
+
 // Update Stat Elements
 
 function updateTotalGamesPlayed() {
   stats.totalGames.innerText = getTotalGamesPlayed();
+}
+
+function updatePercentCorrect() {
+  const totalWins = getTotalWins();
+  const totalGamesPlayed = getTotalGamesPlayed();
+  let percentage = (totalWins / totalGamesPlayed) * 100;
+
+  if (!gamesPlayed.length) {
+    percentage = 0;
+  }
+
+  stats.percentCorrect.innerText = percentage;
 }
 
 // Change Page View Functions
@@ -293,6 +309,7 @@ function viewGame() {
 
 function viewStats() {
   updateTotalGamesPlayed();
+  updatePercentCorrect();
   letterKey.classList.add('hidden');
   gameBoard.classList.add('collapsed');
   rules.classList.add('collapsed');
